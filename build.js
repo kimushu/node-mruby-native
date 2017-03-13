@@ -38,7 +38,7 @@ cleaner.on("exit", (code) => {
         path.join(destDir, "mrbc" + ext)
       )
       console.log("Done (" + destDir + ")")
-      if (process.arch == "x64" && process.platform != "darwin") {
+      if (process.arch == "x64" && process.platform == "linux") {
         const destDir32 = path.join(destDir, "..", "ia32")
         copy(
           path.join(mrubyDir, "build", "host-32bit", "bin", "mrbc" + ext),
