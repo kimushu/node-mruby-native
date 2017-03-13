@@ -2,4 +2,3 @@
 	path = mruby
 	url = https://github.com/kimushu/mruby.git
 	branch = node-native
-	shallow = true
