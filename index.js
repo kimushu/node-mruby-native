@@ -22,6 +22,9 @@ const ext = (process.platform == "win32" ? ".exe" : "")
 function compile(file, options, callback) {
   if (typeof(options) == "function") {
     callback = options
+    options = null
+  }
+  if (!options) {
     options = {}
   }
   var args = []
