@@ -1,0 +1,37 @@
+{
+  "name": "node-mruby-native",
+  "version": "1.2.0",
+  "description": "mruby compiler for Node.js applications",
+  "main": "index.js",
+  "bin": {
+    "mrbc": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js"
+  },
+  "files": [
+    "compiled",
+    "cli.js",
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimushu/node-mruby-native.git"
+  },
+  "keywords": [
+    "mruby",
+    "node"
+  ],
+  "author": "kimu_shu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kimushu/node-mruby-native/issues"
+  },
+  "homepage": "https://github.com/kimushu/node-mruby-native#readme",
+  "dependencies": {},
+  "gypfile": true,
+  "devDependencies": {
+    "fs-extra": "^2.0.0"
+  }
+}
