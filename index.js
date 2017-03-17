@@ -28,6 +28,7 @@ function compile(file, options, callback) {
     options = {}
   }
   var args = []
+  var spawn_opt = {argv0: "mrbc" + ext}
   if (options.check_syntax_only) {
     args.push("-c")
   }
@@ -54,10 +55,13 @@ function compile(file, options, callback) {
   } else {
     args.push(file)
   }
+  if (options.cwd) {
+    spawn_opt.cwd = options.cwd
+  }
   var mrbc = spawn(
     path.join(__dirname, "compiled", process.platform, process.arch, "mrbc" + ext),
     args,
-    {argv0: "mrbc" + ext}
+    spawn_opt
   )
   mrbc.on("exit", (code) => {
     mrbc.stdout.setEncoding("utf-8")
