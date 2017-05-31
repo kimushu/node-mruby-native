@@ -25,7 +25,7 @@ cleaner.on("exit", (code) => {
   builder.on("exit", (code) => {
     if (code != 0) {
       process.exitCode = code
-      return console.err("mruby compile failed")
+      return console.error("mruby compile failed")
     }
     copy = (from, to) => {
       fse.ensureDirSync(path.dirname(to))
