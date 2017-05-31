@@ -1,9 +1,20 @@
 
+let arch = process.arch;
+
+if (process.platform === "win32") {
+  process.env.CFLAGS = "/c /nologo /W3 /we4013 /Zi /MT /O2 /D_CRT_SECURE_NO_WARNINGS"
+  if (process.env.PLATFORM === "X64") {
+    arch = "x64"
+  } else {
+    arch = "ia32"
+  }
+}
+
 const fse = require("fs-extra")
 const path = require("path")
 const {spawn} = require("child_process")
 const mrubyDir = path.join(__dirname, "mruby")
-const destDir = path.join(__dirname, "compiled", process.platform, process.arch)
+const destDir = path.join(__dirname, "compiled", process.platform, arch)
 const ext = (process.platform == "win32" ? ".exe" : "")
 
 var cleaner = spawn("ruby", ["./minirake", "clean"], {
