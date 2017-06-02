@@ -15,7 +15,7 @@ const path = require("path");
 const { spawn, spawnSync } = require("child_process");
 const mrubyDir = path.join(__dirname, "mruby");
 const destDir = path.join(__dirname, "compiled", process.platform, arch);
-const ext = (process.platform == "win32" ? ".exe" : "");
+const ext = (process.platform === "win32" ? ".exe" : "");
 
 var cleaner = spawn("ruby", ["./minirake", "clean"], {
     cwd: mrubyDir,
@@ -23,7 +23,7 @@ var cleaner = spawn("ruby", ["./minirake", "clean"], {
 });
 
 cleaner.on("exit", (code) => {
-    if (code != 0) {
+    if (code !== 0) {
         process.exitCode = code;
         return console.err("mruby clean failed");
     }
@@ -34,7 +34,7 @@ cleaner.on("exit", (code) => {
     });
 
     builder.on("exit", (code) => {
-        if (code != 0) {
+        if (code !== 0) {
             process.exitCode = code;
             return console.error("mruby compile failed");
         }
@@ -51,7 +51,7 @@ cleaner.on("exit", (code) => {
                 path.join(destDir, "mrbc" + ext)
             );
             console.log("Done (" + destDir + ")");
-            if (process.arch == "x64" && process.platform == "linux") {
+            if (process.arch === "x64" && process.platform === "linux") {
                 const destDir32 = path.join(destDir, "..", "ia32");
                 copy(
                     path.join(mrubyDir, "build", "host-32bit", "bin", "mrbc" + ext),

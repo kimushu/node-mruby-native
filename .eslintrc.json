@@ -15,6 +15,7 @@
         "constructor-super": "warn",
         "quotes": "warn",
         "semi": "warn",
+        "eqeqeq": "warn",
         "valid-typeof": "warn"
     }
 }
