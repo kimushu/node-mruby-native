@@ -12,7 +12,7 @@ if (process.platform === "win32") {
 
 const fse = require("fs-extra")
 const path = require("path")
-const {spawn} = require("child_process")
+const {spawn, spawnSync} = require("child_process")
 const mrubyDir = path.join(__dirname, "mruby")
 const destDir = path.join(__dirname, "compiled", process.platform, arch)
 const ext = (process.platform == "win32" ? ".exe" : "")
@@ -38,9 +38,12 @@ cleaner.on("exit", (code) => {
       process.exitCode = code
       return console.error("mruby compile failed")
     }
-    copy = (from, to) => {
+    copy = (from, to, strip = true) => {
       fse.ensureDirSync(path.dirname(to))
       fse.copySync(from, to)
+      if (strip && process.platform !== "win32") {
+        spawnSync("strip", [to])
+      }
     }
     try
     {
