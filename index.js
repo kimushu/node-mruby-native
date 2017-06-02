@@ -61,10 +61,9 @@ function compile(file, options, callback) {
     }
     let mrbc_path = path.join(__dirname, "compiled", process.platform, process.arch, "mrbc" + ext);
     try {
-        fs.accessSync(mrbc, fs.constants.X_OK);
+        fs.accessSync(mrbc_path, fs.constants.X_OK);
     } catch (error) {
-        console.log("chmod");
-        fs.chmodSync(mrbc, 509 /* 0775 */);
+        fs.chmodSync(mrbc_path, 509 /* 0775 */);
     }
     let mrbc = spawn(
         mrbc_path,
