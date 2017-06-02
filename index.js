@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 Usage: /path/to/mrbc [switches] programfile
@@ -15,73 +15,73 @@ Usage: /path/to/mrbc [switches] programfile
   --copyright  print the copyright
 */
 
-const {spawn} = require("child_process")
-const path = require("path")
-const ext = (process.platform == "win32" ? ".exe" : "")
+const {spawn} = require("child_process");
+const path = require("path");
+const ext = (process.platform == "win32" ? ".exe" : "");
 
 function compile(file, options, callback) {
   if (typeof(options) == "function") {
-    callback = options
-    options = null
+    callback = options;
+    options = null;
   }
   if (!options) {
-    options = {}
+    options = {};
   }
-  var args = []
-  var spawn_opt = {argv0: "mrbc" + ext}
+  var args = [];
+  var spawn_opt = {argv0: "mrbc" + ext};
   if (options.check_syntax_only) {
-    args.push("-c")
+    args.push("-c");
   }
   if (options.output) {
-    args.push("-o" + options.output)
+    args.push("-o" + options.output);
   }
   if (options.verbose) {
-    args.push("-v")
+    args.push("-v");
   }
   if (options.debug) {
-    args.push("-g")
+    args.push("-g");
   }
   if (options.symbol) {
-    args.push("-B" + options.symbol)
+    args.push("-B" + options.symbol);
   }
   if (options.little_endian) {
-    args.push("-e")
+    args.push("-e");
   }
   if (options.big_endian) {
-    args.push("-E")
+    args.push("-E");
   }
   if (file instanceof Array) {
-    args = args.concat(file)
+    args = args.concat(file);
   } else {
-    args.push(file)
+    args.push(file);
   }
   if (options.cwd) {
-    spawn_opt.cwd = options.cwd
+    spawn_opt.cwd = options.cwd;
   }
   var mrbc = spawn(
     path.join(__dirname, "compiled", process.platform, process.arch, "mrbc" + ext),
     args,
     spawn_opt
-  )
+  );
   mrbc.on("exit", (code) => {
-    mrbc.stdout.setEncoding("utf-8")
-    var stdout = mrbc.stdout.read()
-    mrbc.stderr.setEncoding("utf-8")
-    var stderr = mrbc.stderr.read()
-    var err = null
+    mrbc.stdout.setEncoding("utf-8");
+    var stdout = mrbc.stdout.read();
+    mrbc.stderr.setEncoding("utf-8");
+    var stderr = mrbc.stderr.read();
+    var err = null;
     if (code != 0) {
-      err = Error("mrbc aborted with code=" + code)
+      err = Error("mrbc aborted with code=" + code);
     }
-    callback(err, stdout, stderr)
-  })
+    callback(err, stdout, stderr);
+  });
 }
 
 function version(callback) {
-  return compile("--version", {}, callback)
+  return compile("--version", {}, callback);
 }
 
 function copyright(callback) {
-  return compile("--copyright", {}, callback)
+  return compile("--copyright", {}, callback);
 }
 
-module.exports = {compile, version, copyright}
+module.exports = {compile, version, copyright};

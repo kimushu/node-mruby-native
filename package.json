@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint *.js",
     "build": "node build.js"
   },
   "files": [
@@ -32,6 +33,7 @@
   "dependencies": {},
   "gypfile": true,
   "devDependencies": {
+    "eslint": "^3.19.0",
     "fs-extra": "^2.0.0"
   }
 }
