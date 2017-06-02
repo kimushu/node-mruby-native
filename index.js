@@ -17,6 +17,7 @@ Usage: /path/to/mrbc [switches] programfile
 
 const { spawn } = require("child_process");
 const path = require("path");
+const fs = require("fs");
 const ext = (process.platform === "win32" ? ".exe" : "");
 
 function compile(file, options, callback) {
@@ -58,8 +59,15 @@ function compile(file, options, callback) {
     if (options.cwd) {
         spawn_opt.cwd = options.cwd;
     }
+    let mrbc_path = path.join(__dirname, "compiled", process.platform, process.arch, "mrbc" + ext);
+    try {
+        fs.accessSync(mrbc, fs.constants.X_OK);
+    } catch (error) {
+        console.log("chmod");
+        fs.chmodSync(mrbc, 509 /* 0775 */);
+    }
     let mrbc = spawn(
-        path.join(__dirname, "compiled", process.platform, process.arch, "mrbc" + ext),
+        mrbc_path,
         args,
         spawn_opt
     );
