@@ -18,7 +18,23 @@ Usage: /path/to/mrbc [switches] programfile
 const { spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
+const archs = (process.arch === "x64") ? ["x64", "ia32"] : [process.arch];
 const ext = (process.platform === "win32" ? ".exe" : "");
+
+let mrbc_path;
+archs.some((arch) => {
+    let result = path.join(__dirname, "compiled", process.platform, arch, "mrbc" + ext);
+    if (!fs.existsSync(result)) {
+        return false;
+    }
+    try {
+        fs.accessSync(result, fs.constants.X_OK);
+    } catch (error) {
+        fs.chmodSync(result, 509 /* 0775 */);
+    }
+    mrbc_path = result;
+    return true;
+});
 
 function compile(file, options, callback) {
     if (typeof (options) === "function") {
@@ -29,7 +45,7 @@ function compile(file, options, callback) {
         options = {};
     }
     let args = [];
-    let spawn_opt = { argv0: "mrbc" + ext };
+    let spawn_opt = { argv0: path.basename(mrbc_path) };
     if (options.check_syntax_only) {
         args.push("-c");
     }
@@ -59,12 +75,6 @@ function compile(file, options, callback) {
     if (options.cwd) {
         spawn_opt.cwd = options.cwd;
     }
-    let mrbc_path = path.join(__dirname, "compiled", process.platform, process.arch, "mrbc" + ext);
-    try {
-        fs.accessSync(mrbc_path, fs.constants.X_OK);
-    } catch (error) {
-        fs.chmodSync(mrbc_path, 509 /* 0775 */);
-    }
     let mrbc = spawn(
         mrbc_path,
         args,
@@ -91,4 +101,4 @@ function copyright(callback) {
     return compile("--copyright", {}, callback);
 }
 
-module.exports = { compile, version, copyright };
+module.exports = { compile, version, copyright, mrbc_path };
