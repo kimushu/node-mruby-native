@@ -92,11 +92,14 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     }
     console.log("==== Packaging ====");
     let dest = path.join(buildDir, `mrbc-${packageVersion}-${process.platform}-${arch}.tar.gz`);
-    console.log(`- Generating archive (${path.basename(dest)})`);
-    return pify(tar.c)(
-        { gzip: true, file: dest, cwd: binDir},
-        targets
-    );
+    return fs.ensureDir(path.dirname(dest))
+    .then(() => {
+        console.log(`- Generating archive (${path.basename(dest)})`);
+        return pify(tar.c)(
+            { gzip: true, file: dest, cwd: binDir},
+            targets
+        );
+    });
 })
 .then(() => {
     // Cleanup
