@@ -1,7 +1,6 @@
 image: Visual Studio 2015
 
-on:
-  appveyor_repo_tag: true
+skip_non_tags: true
 
 environment:
   matrix:
