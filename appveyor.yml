@@ -10,6 +10,11 @@ artifacts:
   - path: build\*.tar.gz
     type: file
 
+cache:
+  - node_modules
+  - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+
 install:
   - ps: Install-Product node 7.9.0 x64
   - npm install -g npm@4 --silent
