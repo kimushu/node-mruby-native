@@ -1,5 +1,10 @@
 image: Visual Studio 2015
 
+- provider: Environment
+  name: production
+  on:
+    appveyor_repo_tag: true
+
 environment:
   matrix:
   - TARGET_ARCH: x86
