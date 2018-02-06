@@ -128,9 +128,8 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
             token: process.env.GITHUB_TOKEN
         });
     }
-    let tag = `v${packageVersion}`;
     return github.repos.getReleaseByTag(
-        { owner: "kimushu", repo: "node-mruby-native", tag }
+        { owner: "kimushu", repo: "node-mruby-native", tag: packageVersion }
     )
     .then((rel: { upload_url: string }) => {
         console.log(`- Uploading asset data (${asset.name} [${asset.contentLength} bytes])`);
