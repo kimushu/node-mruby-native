@@ -79,10 +79,11 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     })
     .then(() => {
         // Copy
-        console.log(`- Copying artifact (${relDir})`);
+        let dest = path.join(destDir, path.basename(target));
+        console.log(`- Copying artifact (${dest})`);
         return fs.ensureDir(destDir)
         .then(() => {
-            return fs.copy(target, path.join(destDir, path.basename(target)));
+            return fs.copy(target, dest);
         });
     });
 }, Promise.resolve()))
@@ -115,7 +116,7 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
 })
 .then((asset) => {
     // Upload
-    if (process.argv.indexOf("--upload") < 0) {
+    if ((asset == null) || (process.env.GITHUB_UPLOAD == null)) {
         return;
     }
     console.log("==== Uploading ====");
