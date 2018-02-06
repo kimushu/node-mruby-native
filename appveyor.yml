@@ -7,8 +7,6 @@ environment:
   YACC: win_bison
 
 install:
-  - ps: Install-Product node 7.9.0 x64
-  - npm install -g npm@4 --silent
   - choco install winflexbison3
   - node --version
   - npm --version

@@ -81,7 +81,7 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
         console.log(`- Copying artifact (${relDir})`);
         return fs.ensureDir(destDir)
         .then(() => {
-            return pify(fs.copyFile)(target, path.join(destDir, path.basename(target)));
+            return fs.copy(target, path.join(destDir, path.basename(target)));
         });
     });
 }, Promise.resolve()))
