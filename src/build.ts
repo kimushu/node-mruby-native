@@ -133,11 +133,12 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
         { owner: "kimushu", repo: "node-mruby-native", tag }
     )
     .then((rel: { upload_url: string }) => {
-        console.log("debug:", JSON.stringify(rel));
         console.log(`- Uploading asset data (${asset.name} [${asset.contentLength} bytes])`);
         return github.repos.uploadAsset(
             Object.assign({ url: rel.upload_url }, asset)
         );
+    }, (reason) => {
+        console.warn(`- Failed to get release (${reason.status})`);
     });
 })
 .then(() => {
@@ -146,6 +147,6 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     return promisifiedSpawn("git", ["checkout", "master"], spawnOpt);
 })
 .catch((reason) => {
-    console.error(reason.stack);
+    console.error(reason.stack || reason);
     process.exitCode = 1;
 });
