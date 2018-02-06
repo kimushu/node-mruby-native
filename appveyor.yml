@@ -5,6 +5,14 @@ environment:
   - TARGET_ARCH: x86
   - TARGET_ARCH: x64
 
+install:
+  - ps: Install-Product node 7.9.0 x64
+  - npm install -g npm@4 --silent
+  - node --version
+  - npm --version
+  - yarn
+  - tsc --version
+
 before_build:
   - '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%'
 
