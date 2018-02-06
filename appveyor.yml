@@ -7,13 +7,14 @@ environment:
   YACC: win_bison
 
 install:
+  - ps: Install-Product node 7.9.0 x64
+  - npm install -g npm@4 --silent
   - choco install winflexbison3
   - node --version
   - npm --version
   - git submodule init
   - git submodule update
   - yarn --ignore-scripts
-  - tsc --version
 
 before_build:
   - '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%'
