@@ -4,6 +4,7 @@ import * as tar from "tar";
 import * as pify from "pify";
 import { spawn, SpawnOptions } from "child_process";
 import { MrubyCompiler } from "./index";
+import * as GitHub from "github";
 
 let { arch } = process;
 
@@ -98,6 +99,43 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
         return pify(tar.c)(
             { gzip: true, file: dest, cwd: binDir},
             targets
+        );
+    })
+    .then(() => {
+        return fs.readFile(dest)
+        .then((file) => {
+            return {
+                file,
+                contentType: "application/tar+gzip",
+                contentLength: file.byteLength,
+                name: path.basename(dest),
+            };
+        });
+    });
+})
+.then((asset) => {
+    // Upload
+    if (process.argv.indexOf("--upload") < 0) {
+        return;
+    }
+    console.log("==== Uploading ====");
+    let github = new GitHub();
+    if (process.env.GITHUB_TOKEN != null) {
+        console.log("- GitHub API will be authenticated by token");
+        github.authenticate({
+            type: "token",
+            token: process.env.GITHUB_TOKEN
+        });
+    }
+    let tag = `v${packageVersion}`;
+    return github.repos.getReleaseByTag(
+        { owner: "kimushu", repo: "node-mruby-native", tag }
+    )
+    .then((rel: { upload_url: string }) => {
+        console.log("debug:", JSON.stringify(rel));
+        console.log(`- Uploading asset data (${asset.name} [${asset.contentLength} bytes])`);
+        return github.repos.uploadAsset(
+            Object.assign({ url: rel.upload_url }, asset)
         );
     });
 })
