@@ -6,6 +6,10 @@ environment:
   - TARGET_ARCH: x64
   YACC: win_bison
 
+artifacts:
+  - path: build\*.tar.gz
+    type: file
+
 install:
   - ps: Install-Product node 7.9.0 x64
   - npm install -g npm@4 --silent
