@@ -7,9 +7,9 @@
     "mrbc": "./out/cli.js"
   },
   "scripts": {
-    "pretest": "npm run compile",
     "compile": "tsc -p .",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha ./out/test",
+    "pretest": "npm run compile",
     "install": "node ./out/cli.js --setup --version",
     "build": "node ./out/build.js",
     "upload": "node ./out/upload.js"
