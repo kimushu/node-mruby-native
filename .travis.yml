@@ -42,5 +42,5 @@ before_script:
 script:
   - npm run test
 
-deploy_script:
+after_success:
   - npm run upload
