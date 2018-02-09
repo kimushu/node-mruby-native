@@ -35,6 +35,7 @@ function promisifiedSpawn(command: string, args: string[], options: SpawnOptions
     });
 }
 
+let arch = getCpuArchName(true);
 let mrubyDir = path.join(__dirname, "..", "mruby");
 
 const spawnOpt = {
@@ -47,7 +48,7 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
 .then((output) => {
     console.log(`==== Build information ====`);
     console.log(`- Platform: ${process.platform}`);
-    console.log(`- Architecture: ${getCpuArchName(true)}`);
+    console.log(`- Architecture: ${arch}`);
     console.log(`- Package version: ${PKG_VERSION}`);
 })
 .then(() => PREBUILT_MRUBY_VERSIONS.reduce((promise, mrubyVersion) => {
@@ -72,10 +73,18 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     })
     .then(() => {
         // Build
+        let env = {};
+        if ((process.platform !== "win32") && (arch === "ia32")) {
+            env = {
+                CC: "gcc -m32",
+                CXX: "g++ -m32",
+                LD: "gcc -m32",
+            };
+        }
         console.log("- Building");
         return promisifiedSpawn("ruby", [
             "./minirake", target.replace(/\\/g, "/")
-        ], spawnOpt);
+        ], Object.assign({ env }, spawnOpt));
     })
     .then(() => {
         // Copy
