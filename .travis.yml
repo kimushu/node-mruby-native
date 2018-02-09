@@ -17,7 +17,7 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-4.8-multilib
+            - gcc-multilib
     - os: osx
       sudo: false
       env: TARGET_ARCH=x64
