@@ -3,9 +3,67 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import { spawn, SpawnOptions } from "child_process";
 
-const BINARY_BASE_DIR = path.join(__dirname, "..", "compiled");
-const SELF_VERSION = require(path.join(__dirname, "..", "package.json")).version;
-const DOWNLOAD_BASE_URL = `https://github.com/kimushu/node-mruby-native/releases/download/v${SELF_VERSION}/mrbc-${SELF_VERSION}`;
+/** Array of prebuilt mruby versions */
+export const PREBUILT_MRUBY_VERSIONS = Object.freeze(
+    ["1.3.0", "1.2.0"]
+);
+
+/** Base directory for mrbc binaries */
+export const MRBC_BASE_DIR = path.join(__dirname, "..", "compiled");
+
+/** Base directory for distribution packages (for build only) */
+export const DIST_BASE_DIR = path.join(__dirname, "..", "dist");
+
+/** Package version (NOT mruby version) */
+export const PKG_VERSION = require(path.join(__dirname, "..", "package.json")).version;
+
+const DOWNLOAD_BASE_URL = `https://github.com/kimushu/node-mruby-native/releases/download/${PKG_VERSION}/`;
+
+/**
+ * Get CPU architecture name
+ * @param build Override architecture for build
+ * @param use32bit Use 32-bit binary (ignored on Mac)
+ */
+export function getCpuArchName(build?: boolean, use32bit?: boolean): string {
+    if (build) {
+        // Override architecture by environment variable
+        let { TARGET_ARCH } = process.env;
+        switch (TARGET_ARCH) {
+            case "x64":
+                return "x64";
+            case "x86":
+                return "ia32";
+            default:
+                throw new Error(`Unknown TARGET_ARCH: ${TARGET_ARCH}`);
+        }
+    }
+    if ((process.platform !== "darwin") && use32bit) {
+        return "ia32";
+    }
+    return process.arch;
+}
+
+/**
+ * Get mrbc binary path
+ * @param version mruby version
+ * @param build Override architecture for build
+ * @param use32bit Use 32-bit binary (ignored on Mac)
+ */
+export function getMrbcPath(version: string, build?: boolean, use32bit?: boolean): string {
+    let { platform } = process;
+    let arch = getCpuArchName(build, use32bit);
+    let ext = (platform === "win32") ? ".exe" : "";
+    return path.join(MRBC_BASE_DIR, version, platform, arch, "mrbc" + ext);
+}
+
+/**
+ * Get archive name
+ * @param build Override architecture for build
+ */
+export function getArchiveName(build?: boolean): string {
+    let arch = getCpuArchName(build);
+    return `mrbc-${PKG_VERSION}-${process.platform}-${arch}.tar.gz`;
+}
 
 /**
  * Compiler options
@@ -52,11 +110,6 @@ export class MrubyCompiler {
     /** Download base URL (This should be used for test only) */
     static downloadBaseUrl: string = null;
 
-    /** Array of prebuilt mruby versions */
-    static readonly PREBUILT_MRUBY_VERSIONS = Object.freeze(
-        ["1.3.0", "1.2.0"]
-    );
-
     /**
      * Construct compiler instance
      * @param version Expected version (semver format)
@@ -64,7 +117,7 @@ export class MrubyCompiler {
      */
     constructor(version?: string, use32bit?: boolean) {
         // Find version
-        this._version = new.target.PREBUILT_MRUBY_VERSIONS.find((candidate) =>
+        this._version = PREBUILT_MRUBY_VERSIONS.find((candidate) =>
             (version == null) || (semver.satisfies(candidate, version))
         );
         if (this._version == null) {
@@ -72,29 +125,10 @@ export class MrubyCompiler {
         }
 
         // Generate executable path
-        let arch = process.arch;
-        if (use32bit && (arch === "x64") && (process.platform !== "darwin")) {
-            arch = "ia32";
-        }
-        let basename = "mrbc";
-        if (process.platform === "win32") {
-            basename += ".exe";
-        }
-        this._executablePath = path.join(
-            (new.target.prebuiltBaseDir || BINARY_BASE_DIR),
-            this._version,
-            process.platform,
-            arch,
-            basename
-        );
+        this._executablePath = getMrbcPath(this._version, false, use32bit);
 
         // Generate download URL
-        this._downloadUrl = `${[
-            (new.target.downloadBaseUrl || DOWNLOAD_BASE_URL),
-            this._version,
-            process.platform,
-            arch
-        ].join("-")}.tar.gz`;
+        this._downloadUrl = (new.target.downloadBaseUrl || (DOWNLOAD_BASE_URL + getArchiveName()));
     }
 
     /**
@@ -139,24 +173,17 @@ export class MrubyCompiler {
             }
 
             // Download archive from GitHub
+            console.log(`node-mruby-native: Downloading archive from ${this._downloadUrl}`);
             return require("download")(this._downloadUrl)
             .then((archive) => {
                 // Extract archive
-                return require("decompress")(archive);
+                return require("decompress")(archive, MRBC_BASE_DIR);
             })
-            .then((files: {type: string, path: string, data: Buffer}[]) => {
-                // Search mrbc binary
-                let basename = path.basename(this._executablePath);
-                let source = files.find((file) =>
-                    (file.type === "file") && (path.basename(file.path) === basename)
-                );
-                if (source == null) {
+            .then(() => {
+                // Check binary existence
+                if (!fs.existsSync(this._executablePath)) {
                     throw new Error("No executable found in archive");
                 }
-                return fs.ensureDir(path.dirname(this._executablePath))
-                .then(() => {
-                    return fs.writeFile(this._executablePath, source.data);
-                });
             });
         })
         .then(() => {

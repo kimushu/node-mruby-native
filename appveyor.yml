@@ -31,4 +31,11 @@ before_build:
   - '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %TARGET_ARCH%'
 
 build_script:
+  - npm run compile
   - npm run build
+
+test_script:
+  - npm run test
+
+deploy_script:
+  - npm run upload
