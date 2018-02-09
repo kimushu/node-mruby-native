@@ -1,6 +1,6 @@
 {
   "name": "@rubic/mruby-native",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "mruby compiler for Node.js applications",
   "main": "index.js",
   "bin": {
@@ -8,10 +8,8 @@
   },
   "scripts": {
     "compile": "tsc -p .",
-    "test": "echo skipped",
-    "_test": "istanbul cover ./node_modules/mocha/bin/_mocha ./out/test",
-    "pretest": "npm run compile",
-    "_posttest": "remap-istanbul -i coverage/coverage.json -o coverage/html-report -t html",
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha ./out/test",
+    "posttest": "remap-istanbul -i coverage/coverage.json -o coverage/html-report -t html",
     "install": "node ./out/cli.js --setup --version",
     "build": "node ./out/build.js",
     "upload": "node ./out/upload.js"
