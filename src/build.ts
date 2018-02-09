@@ -73,12 +73,12 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     })
     .then(() => {
         // Build
-        let env = {};
+        let env = Object.assign({}, process.env);
         if ((process.platform !== "win32") && (arch === "ia32")) {
-            env = {
+            Object.assign(env, {
                 CFLAGS: "-m32 -g -std=gnu99 -O3 -Wall -Werror-implicit-function-declaration -Wdeclaration-after-statement -Wwrite-strings",
                 LDFLAGS: "-m32",
-            };
+            });
         }
         console.log("- Building");
         return promisifiedSpawn("ruby", [
