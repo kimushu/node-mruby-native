@@ -14,6 +14,9 @@ matrix:
     - os: linux
       sudo: false
       env: TARGET_ARCH=x86
+    - os: osx
+      sudo: false
+      env: TARGET_ARCH=x64
 
 cache:
   directories:
