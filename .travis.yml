@@ -39,5 +39,5 @@ before_script:
 script:
   - npm run test
 
-deploy:
+deploy_script:
   - npm run upload
