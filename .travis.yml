@@ -6,11 +6,14 @@ language: node_js
 node_js:
   - "7"
 
-sudo: false
-
-os:
-#  - osx
-  - linux
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      env: TARGET_ARCH=x64
+    - os: linux
+      sudo: false
+      env: TARGET_ARCH=x86
 
 cache:
   directories:
