@@ -11,7 +11,7 @@
     "test": "echo skipped",
     "_test": "istanbul cover ./node_modules/mocha/bin/_mocha ./out/test",
     "pretest": "npm run compile",
-    "posttest": "remap-istanbul -i coverage/coverage.json -o coverage/html-report -t html",
+    "_posttest": "remap-istanbul -i coverage/coverage.json -o coverage/html-report -t html",
     "install": "node ./out/cli.js --setup --version",
     "build": "node ./out/build.js",
     "upload": "node ./out/upload.js"
