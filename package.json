@@ -2,7 +2,7 @@
   "name": "@rubic/mruby-native",
   "version": "2.0.0-alpha.2",
   "description": "mruby compiler for Node.js applications",
-  "main": "index.js",
+  "main": "./out/index.js",
   "bin": {
     "mrbc": "./out/cli.js"
   },
@@ -18,6 +18,7 @@
     "out/cli.js",
     "out/index.js"
   ],
+  "types": "./out/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kimushu/node-mruby-native.git"
