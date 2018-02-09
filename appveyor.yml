@@ -9,7 +9,7 @@ environment:
   YACC: win_bison
 
 artifacts:
-  - path: build\*.tar.gz
+  - path: dist\*.tar.gz
     type: file
 
 cache:
