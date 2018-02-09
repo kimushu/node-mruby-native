@@ -25,6 +25,7 @@ const DOWNLOAD_BASE_URL = `https://github.com/kimushu/node-mruby-native/releases
  * @param use32bit Use 32-bit binary (ignored on Mac)
  */
 export function getCpuArchName(build?: boolean, use32bit?: boolean): string {
+    /* istanbul ignore if */
     if (build) {
         // Override architecture by environment variable
         let { TARGET_ARCH } = process.env;
@@ -99,6 +100,9 @@ export class MrubyCompiler {
     /** Download URL */
     private readonly _downloadUrl: string;
 
+    /** Base dir for binary */
+    private readonly _binaryBaseDir: string;
+
     /** Full path of mrbc executable */
     private readonly _executablePath: string;
 
@@ -126,7 +130,8 @@ export class MrubyCompiler {
         }
 
         // Generate executable path
-        this._executablePath = getMrbcPath(this._version, false, use32bit, new.target.prebuiltBaseDir);
+        this._binaryBaseDir = new.target.prebuiltBaseDir;
+        this._executablePath = getMrbcPath(this._version, false, use32bit, this._binaryBaseDir);
 
         // Generate download URL
         this._downloadUrl = (new.target.downloadUrl) || (DOWNLOAD_BASE_URL + getArchiveName());
@@ -177,7 +182,7 @@ export class MrubyCompiler {
             return require("download")(this._downloadUrl)
             .then((archive) => {
                 // Extract archive
-                return require("decompress")(archive, MrubyCompiler.prebuiltBaseDir);
+                return require("decompress")(archive, this._binaryBaseDir || MRBC_BASE_DIR);
             })
             .then(() => {
                 // Check binary existence

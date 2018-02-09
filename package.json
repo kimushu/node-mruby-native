@@ -10,6 +10,7 @@
     "compile": "tsc -p .",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha ./out/test",
     "pretest": "npm run compile",
+    "posttest": "remap-istanbul -i coverage/coverage.json -o coverage/html-report -t html",
     "install": "node ./out/cli.js --setup --version",
     "build": "node ./out/build.js",
     "upload": "node ./out/upload.js"
@@ -54,6 +55,7 @@
     "mocha": "^5.0.0",
     "pify": "^3.0.0",
     "prebuild": "^7.4.0",
+    "remap-istanbul": "^0.10.1",
     "rimraf": "^2.6.2",
     "tar": "^4.3.2",
     "tslint": "^5.9.1",
