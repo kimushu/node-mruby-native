@@ -78,20 +78,21 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
         ], spawnOpt);
     })
     .then(() => {
-        // Strip (for Linux/Mac)
-        if (process.platform === "win32") {
-            return;
-        }
-        console.log("- Stripping");
-        return promisifiedSpawn("strip", [output], spawnOpt);
-    })
-    .then(() => {
         // Copy
         console.log(`- Copying artifact (${output})`);
         return fs.ensureDir(path.dirname(output))
         .then(() => {
             return fs.copy(target, output);
         });
+    })
+    .then(() => {
+        // Strip (for Linux/Mac)
+        if (process.platform === "win32") {
+            return;
+        }
+        console.log("- Stripping");
+        return promisifiedSpawn("strip", [output], spawnOpt)
+        .then(() => {});
     });
 }, Promise.resolve()))
 .then(() => {
