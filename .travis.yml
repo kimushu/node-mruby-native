@@ -12,8 +12,12 @@ matrix:
       sudo: false
       env: TARGET_ARCH=x64
     - os: linux
-      sudo: false
+      sudo: true
       env: TARGET_ARCH=x86
+      addons:
+        apt:
+          packages:
+            - gcc-4.8-multilib
     - os: osx
       sudo: false
       env: TARGET_ARCH=x64
