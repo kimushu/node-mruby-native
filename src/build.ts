@@ -76,9 +76,8 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
         let env = {};
         if ((process.platform !== "win32") && (arch === "ia32")) {
             env = {
-                CC: "gcc -m32",
-                CXX: "g++ -m32",
-                LD: "gcc -m32",
+                CFLAGS: "-m32 -g -std=gnu99 -O3 -Wall -Werror-implicit-function-declaration -Wdeclaration-after-statement -Wwrite-strings",
+                LDFLAGS: "-m32",
             };
         }
         console.log("- Building");
