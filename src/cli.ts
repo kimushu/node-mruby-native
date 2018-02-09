@@ -5,7 +5,7 @@ import { MrubyCompiler } from "./index";
 import * as path from "path";
 
 let setup: boolean = false;
-let mrubyVersion: string = null;
+let mrubyVersion: string = undefined;
 
 let args = process.argv.slice(2).filter((arg) => {
     let match: RegExpMatchArray;
@@ -14,11 +14,12 @@ let args = process.argv.slice(2).filter((arg) => {
         return false;
     } else if (match = arg.match(/^--mrubyVersion=(.*)$/)) {
         mrubyVersion = match[1];
+        return false;
     } else if (match = arg.match(/^--prebuiltBaseDir=(.*)$/)) {
         MrubyCompiler.prebuiltBaseDir = match[1];
         return false;
-    } else if (match = arg.match(/^--downloadBaseUrl=(.*)$/)) {
-        MrubyCompiler.downloadBaseUrl = match[1];
+    } else if (match = arg.match(/^--downloadUrl=(.*)$/)) {
+        MrubyCompiler.downloadUrl = match[1];
         return false;
     }
     return true;
@@ -49,6 +50,6 @@ Promise.resolve()
 .then((code) => {
     process.exitCode = code;
 }, (reason) => {
-    console.error(reason.stack);
+    console.error(reason.stack || reason);
     process.exitCode = 1;
 });

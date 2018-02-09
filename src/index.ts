@@ -48,12 +48,13 @@ export function getCpuArchName(build?: boolean, use32bit?: boolean): string {
  * @param version mruby version
  * @param build Override architecture for build
  * @param use32bit Use 32-bit binary (ignored on Mac)
+ * @param baseDir Base directory
  */
-export function getMrbcPath(version: string, build?: boolean, use32bit?: boolean): string {
+export function getMrbcPath(version: string, build?: boolean, use32bit?: boolean, baseDir?: string): string {
     let { platform } = process;
     let arch = getCpuArchName(build, use32bit);
     let ext = (platform === "win32") ? ".exe" : "";
-    return path.join(MRBC_BASE_DIR, version, platform, arch, "mrbc" + ext);
+    return path.join(baseDir || MRBC_BASE_DIR, version, platform, arch, "mrbc" + ext);
 }
 
 /**
@@ -107,8 +108,8 @@ export class MrubyCompiler {
     /** Prebuilt binary base directory */
     static prebuiltBaseDir: string = null;
 
-    /** Download base URL (This should be used for test only) */
-    static downloadBaseUrl: string = null;
+    /** Download URL (This should be used for test only) */
+    static downloadUrl: string = null;
 
     /**
      * Construct compiler instance
@@ -125,10 +126,10 @@ export class MrubyCompiler {
         }
 
         // Generate executable path
-        this._executablePath = getMrbcPath(this._version, false, use32bit);
+        this._executablePath = getMrbcPath(this._version, false, use32bit, new.target.prebuiltBaseDir);
 
         // Generate download URL
-        this._downloadUrl = (new.target.downloadBaseUrl || (DOWNLOAD_BASE_URL + getArchiveName()));
+        this._downloadUrl = (new.target.downloadUrl) || (DOWNLOAD_BASE_URL + getArchiveName());
     }
 
     /**
@@ -173,11 +174,10 @@ export class MrubyCompiler {
             }
 
             // Download archive from GitHub
-            console.log(`node-mruby-native: Downloading archive from ${this._downloadUrl}`);
             return require("download")(this._downloadUrl)
             .then((archive) => {
                 // Extract archive
-                return require("decompress")(archive, MRBC_BASE_DIR);
+                return require("decompress")(archive, MrubyCompiler.prebuiltBaseDir);
             })
             .then(() => {
                 // Check binary existence
