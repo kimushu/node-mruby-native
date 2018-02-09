@@ -9,7 +9,10 @@ import * as GitHub from "github";
 let { arch } = process;
 
 if ((process.platform === "win32") && (process.env.VCINSTALLDIR != null)) {
-    process.env.CFLAGS = "/c /nologo /W3 /we4013 /Zi /MT /O2 /D_CRT_SECURE_NO_WARNINGS";
+    // Patch for Visual C++ compiler
+    // - Use "/MT" instead of "/MD" to avoid linking to runtime library (MSVCRT)
+    // - Disable warnings for deprecated POSIX names
+    process.env.CFLAGS = "/c /nologo /W3 /we4013 /Zi /MT /O2 /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS";
     if (process.env.PLATFORM === "X64") {
         arch = "x64";
     } else {
