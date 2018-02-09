@@ -57,6 +57,9 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     let destDir = path.join(binDir, relDir);
     let target = path.join(mrubyDir, "build", "host", "bin", "mrbc" + ext);
     targets.push(`${relDir}/${path.basename(target)}`);
+    if (process.env.SKIP_REBUILD != null) {
+        return promise;
+    }
     return promise
     .then(() => {
         console.log(`==== Building mruby ${mrubyVersion} ====`);
@@ -131,10 +134,10 @@ promisifiedSpawn("git", ["show", "-s", "--pretty=%D"], {cwd: __dirname})
     return github.repos.getReleaseByTag(
         { owner: "kimushu", repo: "node-mruby-native", tag: packageVersion }
     )
-    .then((rel: { upload_url: string }) => {
+    .then((rel: { data: { upload_url: string } }) => {
         console.log(`- Uploading asset data (${asset.name} [${asset.contentLength} bytes])`);
         return github.repos.uploadAsset(
-            Object.assign({ url: rel.upload_url }, asset)
+            Object.assign({ url: rel.data.upload_url }, asset)
         );
     }, (reason) => {
         console.warn(`- Failed to get release (${reason.status})`);
