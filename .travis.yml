@@ -1,6 +1,6 @@
 branches:
   only:
-    - /^\d+\.\d+\.\d+(-[A-Za-z-]+(\.\d+)?)?$/
+    # - /^\d+\.\d+\.\d+(-[A-Za-z-]+(\.\d+)?)?$/
 
 language: node_js
 node_js:
@@ -32,5 +32,12 @@ install:
   - git submodule update
   - yarn --ignore-scripts
 
-script:
+before_script:
+  - npm run compile
   - npm run build
+
+script:
+  - npm run test
+
+deploy:
+  - npm run upload
