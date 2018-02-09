@@ -8,10 +8,6 @@ environment:
   - TARGET_ARCH: x64
   YACC: win_bison
 
-artifacts:
-  - path: dist\*.tar.gz
-    type: file
-
 cache:
   - node_modules
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
