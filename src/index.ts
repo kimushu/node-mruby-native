@@ -5,7 +5,7 @@ import { spawn, SpawnOptions } from "child_process";
 
 /** Array of prebuilt mruby versions */
 export const PREBUILT_MRUBY_VERSIONS = Object.freeze(
-    ["1.3.0", "1.2.0"]
+    ["1.4.0", "1.3.0", "1.2.0"]
 );
 
 /** Base directory for mrbc binaries */
