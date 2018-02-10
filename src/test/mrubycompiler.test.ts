@@ -9,8 +9,9 @@ const { assert } = chai;
 
 const TEMP_DIR = path.join(__dirname, "temp");
 const SRC_DIR = path.join(__dirname, "..", "..", "src", "test");
-const DOWNLOAD_URL = `https://github.com/kimushu/node-mruby-native/releases/download/2.0.0-alpha.1/mrbc-2.0.0-alpha.1-${process.platform}-${getCpuArchName()}.tar.gz`;
-const USE_32BIT = (getCpuArchName(true) === "ia32");
+const TEST_ARCH = getCpuArchName(true);
+const USE_32BIT = (TEST_ARCH === "ia32");
+const DOWNLOAD_URL = `https://github.com/kimushu/node-mruby-native/releases/download/2.0.0-alpha.1/mrbc-2.0.0-alpha.1-${process.platform}-${TEST_ARCH}.tar.gz`;
 
 describe("MrubyCompiler", function(){
     describe("constructor", function(){
