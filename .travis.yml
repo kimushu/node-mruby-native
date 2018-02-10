@@ -1,6 +1,6 @@
 branches:
   only:
-    # - /^\d+\.\d+\.\d+(-[A-Za-z-]+(\.\d+)?)?$/
+    - /^\d+\.\d+\.\d+(-[A-Za-z-]+(\.\d+)?)?$/
 
 language: node_js
 node_js:
