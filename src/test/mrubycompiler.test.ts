@@ -10,6 +10,7 @@ const { assert } = chai;
 const TEMP_DIR = path.join(__dirname, "temp");
 const SRC_DIR = path.join(__dirname, "..", "..", "src", "test");
 const DOWNLOAD_URL = `https://github.com/kimushu/node-mruby-native/releases/download/2.0.0-alpha.1/mrbc-2.0.0-alpha.1-${process.platform}-${getCpuArchName()}.tar.gz`;
+const USE_32BIT = (getCpuArchName() === "ia32");
 
 describe("MrubyCompiler", function(){
     describe("constructor", function(){
@@ -18,12 +19,12 @@ describe("MrubyCompiler", function(){
         });
 
         it("can be instanciated with default mruby version", function(){
-            let inst = new MrubyCompiler();
+            let inst = new MrubyCompiler(null, USE_32BIT);
             assert.instanceOf(inst, MrubyCompiler);
         });
 
         it("can be instanciated with valid mruby version", function(){
-            let inst = new MrubyCompiler("1.3.x");
+            let inst = new MrubyCompiler("1.3.x", USE_32BIT);
             assert.instanceOf(inst, MrubyCompiler);
         });
 
@@ -37,12 +38,12 @@ describe("MrubyCompiler", function(){
         });
 
         it("throws an error by instanciating with invalid mruby version", function(){
-            assert.throws(() => new MrubyCompiler("0.0.0"));
+            assert.throws(() => new MrubyCompiler("0.0.0", USE_32BIT));
         });
     });
 
     describe("\"version\" property", function(){
-        let inst = new MrubyCompiler("1.3.x");
+        let inst = new MrubyCompiler("1.3.x", USE_32BIT);
 
         it("returns an actual mruby version (not semver range)", function(){
             assert.equal(inst.version, "1.3.0");
@@ -54,7 +55,7 @@ describe("MrubyCompiler", function(){
     });
 
     describe("\"ready\" property", function(){
-        let inst = new MrubyCompiler();
+        let inst = new MrubyCompiler(null, USE_32BIT);
 
         before(function(done){
             rimraf(TEMP_DIR, done);
@@ -67,7 +68,7 @@ describe("MrubyCompiler", function(){
         it("returns true when binary is available", function(){
             try {
                 MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
-                let inst2 = new MrubyCompiler();
+                let inst2 = new MrubyCompiler(null, USE_32BIT);
                 assert.isFalse(inst2.ready);
             } finally {
                 MrubyCompiler.prebuiltBaseDir = null;
@@ -80,20 +81,20 @@ describe("MrubyCompiler", function(){
     });
 
     describe("\"executablePath\" property", function(){
-        let inst = new MrubyCompiler();
+        let inst = new MrubyCompiler(null, USE_32BIT);
 
         it("returns string", function(){
             assert.isString(inst.executablePath);
         });
 
         it("is readonly", function(){
-            let inst = new MrubyCompiler();
+            let inst = new MrubyCompiler(null, USE_32BIT);
             assert.throws(() => (<any>inst).executablePath = "foobar");
         });
     });
 
     describe("\"setup\" function", function(){
-        let inst = new MrubyCompiler();
+        let inst = new MrubyCompiler(null, USE_32BIT);
 
         before(function(done){
             rimraf(TEMP_DIR, done);
@@ -112,7 +113,7 @@ describe("MrubyCompiler", function(){
         it("fails when binary is not available and downloading is suppressed", function(){
             try {
                 MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
-                let inst2 = new MrubyCompiler();
+                let inst2 = new MrubyCompiler(null, USE_32BIT);
                 return assert.isRejected(inst2.setup(true));
             } finally {
                 MrubyCompiler.prebuiltBaseDir = null;
@@ -130,7 +131,7 @@ describe("MrubyCompiler", function(){
                 try {
                     MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
                     MrubyCompiler.downloadUrl = DOWNLOAD_URL + ".invalid";
-                    let inst2 = new MrubyCompiler();
+                    let inst2 = new MrubyCompiler(null, USE_32BIT);
                     this.timeout(5000);
                     return assert.isRejected(inst2.setup());
                 } finally {
@@ -143,7 +144,7 @@ describe("MrubyCompiler", function(){
                 try {
                     MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
                     MrubyCompiler.downloadUrl = DOWNLOAD_URL;
-                    let inst2 = new MrubyCompiler();
+                    let inst2 = new MrubyCompiler(null, USE_32BIT);
                     this.timeout(20000);
                     return assert.isFulfilled(inst2.setup());
                 } finally {
@@ -155,7 +156,7 @@ describe("MrubyCompiler", function(){
     });
 
     describe("\"compile\" function", function(){
-        let inst = new MrubyCompiler();
+        let inst = new MrubyCompiler(null, USE_32BIT);
 
         let cleanup = function(done){
             rimraf(path.join(SRC_DIR, "sample1.mrb"), done);
@@ -185,7 +186,7 @@ describe("MrubyCompiler", function(){
 
         let hookTest = (title: string, options: MrubyCompilerOptions, validator: ((args: string[]) => void) | (string[]), input: any = "dummy") => {
             it(title, function(done){
-                let inst2 = new MrubyCompiler();
+                let inst2 = new MrubyCompiler(null, USE_32BIT);
                 (<any>inst2)._run = (args: string[]) => {
                     try {
                         if (typeof(validator) === "function") {
@@ -280,7 +281,7 @@ describe("MrubyCompiler", function(){
     });
 
     describe("\"getVersion\" function", function(){
-        let inst = new MrubyCompiler();
+        let inst = new MrubyCompiler(null, USE_32BIT);
 
         it("is a function", function(){
             assert.isFunction(inst.getVersion);
@@ -297,7 +298,7 @@ describe("MrubyCompiler", function(){
     });
 
     describe("\"getCopyright\" function", function(){
-        let inst = new MrubyCompiler();
+        let inst = new MrubyCompiler(null, USE_32BIT);
 
         it("is a function", function(){
             assert.isFunction(inst.getCopyright);
