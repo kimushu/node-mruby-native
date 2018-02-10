@@ -10,6 +10,7 @@ const { assert } = chai;
 const TEMP_DIR = path.join(__dirname, "temp");
 const SRC_DIR = path.join(__dirname, "..", "..", "src", "test");
 const TEST_ARCH = getCpuArchName(true);
+const TEST_MRUBY_VER = "1.3.x";
 const USE_32BIT = (TEST_ARCH === "ia32");
 const DOWNLOAD_URL = `https://github.com/kimushu/node-mruby-native/releases/download/2.0.0-alpha.1/mrbc-2.0.0-alpha.1-${process.platform}-${TEST_ARCH}.tar.gz`;
 
@@ -31,7 +32,7 @@ describe("MrubyCompiler", function(){
 
         it("can be instanciated with 32-bit mode", function(){
             if ((process.platform !== "darwin") && (process.arch === "x64")) {
-                let inst = new MrubyCompiler(null, true);
+                let inst = new MrubyCompiler("1.3.x", true);
                 assert.instanceOf(inst, MrubyCompiler);
             } else {
                 this.skip();
@@ -132,7 +133,7 @@ describe("MrubyCompiler", function(){
                 try {
                     MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
                     MrubyCompiler.downloadUrl = DOWNLOAD_URL + ".invalid";
-                    let inst2 = new MrubyCompiler(null, USE_32BIT);
+                    let inst2 = new MrubyCompiler("1.2.0", USE_32BIT);
                     this.timeout(5000);
                     return assert.isRejected(inst2.setup());
                 } finally {
@@ -141,12 +142,25 @@ describe("MrubyCompiler", function(){
                 }
             });
     
+            it("fails when binary is not available and downloaded archive does not have specified version", function(){
+                try {
+                    MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
+                    MrubyCompiler.downloadUrl = DOWNLOAD_URL;
+                    let inst2 = new MrubyCompiler("1.4.0", USE_32BIT);
+                    this.timeout(60000);
+                    return assert.isRejected(inst2.setup(), "No executable found in archive");
+                } finally {
+                    MrubyCompiler.prebuiltBaseDir = null;
+                    MrubyCompiler.downloadUrl = null;
+                }
+            });
+
             it("succeeds without result", function(){
                 try {
                     MrubyCompiler.prebuiltBaseDir = TEMP_DIR;
                     MrubyCompiler.downloadUrl = DOWNLOAD_URL;
-                    let inst2 = new MrubyCompiler(null, USE_32BIT);
-                    this.timeout(20000);
+                    let inst2 = new MrubyCompiler("1.2.0", USE_32BIT);
+                    this.timeout(60000);
                     return assert.isFulfilled(inst2.setup());
                 } finally {
                     MrubyCompiler.prebuiltBaseDir = null;

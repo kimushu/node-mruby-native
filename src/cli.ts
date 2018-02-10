@@ -6,6 +6,7 @@ import * as path from "path";
 
 let setup: boolean = false;
 let mrubyVersion: string = undefined;
+let use32bit: boolean = false;
 
 let args = process.argv.slice(2).filter((arg) => {
     let match: RegExpMatchArray;
@@ -21,11 +22,14 @@ let args = process.argv.slice(2).filter((arg) => {
     } else if (match = arg.match(/^--downloadUrl=(.*)$/)) {
         MrubyCompiler.downloadUrl = match[1];
         return false;
+    } else if (match = arg.match(/^--32bit$/)) {
+        use32bit = true;
+        return false;
     }
     return true;
 });
 
-let compiler = new MrubyCompiler(mrubyVersion);
+let compiler = new MrubyCompiler(mrubyVersion, use32bit);
 
 Promise.resolve()
 .then(() => {
