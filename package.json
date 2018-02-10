@@ -16,7 +16,8 @@
   },
   "files": [
     "out/cli.js",
-    "out/index.js"
+    "out/index.js",
+    "out/index.d.ts"
   ],
   "types": "./out/index.d.ts",
   "repository": {
