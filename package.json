@@ -1,6 +1,6 @@
 {
-  "name": "@rubic/mruby-native",
-  "version": "2.0.0-alpha.2",
+  "name": "mruby-native",
+  "version": "2.0.0-alpha.3",
   "description": "mruby compiler for Node.js applications",
   "main": "./out/index.js",
   "bin": {
